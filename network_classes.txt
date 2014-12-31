@@ -1,0 +1,34 @@
+neuron -> actually, it doesn't look like pybrain uses a neuron class: instead, it has different layer classes which do different functions on each neuron
+	Ex. sigmoidlayer, tanhlayer
+		sigmoidlayer:
+		__author__ = 'Tom Schaul, tom@idsia.ch'
+
+		from neuronlayer import NeuronLayer
+		from pybrain.tools.functions import sigmoid
+
+
+		class SigmoidLayer(NeuronLayer):
+		    """Layer implementing the sigmoid squashing function."""
+
+		    def _forwardImplementation(self, inbuf, outbuf):
+		        outbuf[:] = sigmoid(inbuf)
+
+		    def _backwardImplementation(self, outerr, inerr, outbuf, inbuf):
+		        inerr[:] = outbuf * (1 - outbuf) * outerr
+
+layer (module) -> as above, each layer performs the specified function (sigmoid, tanh, etc) on each input node for forward and backward propagation. Note that it doesn't contain any nodes.
+	Properties: None
+	Methods: 	_forwardImplementation(self, inbuf, outbuf) (aka Forward Propagation)
+				_forwardImplementation(self, inerr, outerr, outbuf, inbuff) (note inbuff does nothing)
+
+
+connection -> connects two layers (modules) by sending the output of the first to the input of the second, and transmits error backwards throught the models. Can transform the data as it transmits it. Can specify at what index to begin and end connection.
+	I think we want our implementation to have something like this (makes linear algebra more efficient).
+	Properties: Weights per edge, inlayer, outlayer
+	Methods:	forward(self) (already has inlayer and outlayer)
+				backward(self)
+
+network -> creates a neural network (there are different kinds). Links different layers together.
+	Properties:	Layers, connections
+	Methods:	Initialization
+				Add layers, connections
